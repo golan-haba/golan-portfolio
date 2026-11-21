@@ -414,3 +414,10 @@ button { font: inherit; }
   .site-header nav { margin-left: auto; }   /* hamburger on the right, as in Figma */
   .hero .role { text-transform: uppercase; }
 }
+
+/* mobile hero: fills the screen, only the top of the next section peeks in */
+@media (max-width: 899px) {
+  .hero { height: max(460px, calc(100svh - 110px)); display: flex; flex-direction: column; justify-content: center; }
+  .hero-inner { padding-top: 0; margin-top: -4vh; }
+  .hero .scissors { top: auto; bottom: -19vw; }
+}

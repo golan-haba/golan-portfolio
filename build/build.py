@@ -269,7 +269,7 @@ def home():
              'illustration, and creative storytelling. I love fresh challenges, bold ideas, and making designs stand&nbsp;out!<br><br>'
              '<strong>LET’S CREATE SOMETHING AMAZING&nbsp;TOGETHER!</strong></p></div>'
              '<div class="col">'
-             f'<div class="block reveal"><h2>skills</h2>{img("hm/skills", "After Effects, Illustrator, InDesign, ChatGPT, Figma, Photoshop, Claude", cls="skills")}</div>'
+             f'<div class="block reveal"><h2>skills</h2><picture><source media="(max-width: 899px)" srcset="{IMG}hm/skills-m.webp">{img("hm/skills", "After Effects, Illustrator, InDesign, ChatGPT, Figma, Photoshop, Claude", cls="skills")}</picture></div>'
              '<div class="block reveal"><h2>experience</h2><p><strong>2025-present</strong><br><br>graphic designer - idea&nbsp;studio</p></div>'
              '<div class="block reveal"><h2>education</h2><p><strong>b.design visual communication</strong><br><br>holon institute of technology (hit) | 2020&#8209;2024</p></div>'
              '</div></section>')
