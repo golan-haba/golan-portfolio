@@ -57,6 +57,60 @@
     init();
   });
 
+  /* ---------- mobile lightbox: tap a carousel item to enlarge it, tap outside to close ---------- */
+  (() => {
+    const lb = document.createElement('div');
+    lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true');
+    lb.innerHTML = '<div class="lb-box"></div>';
+    document.body.appendChild(lb);
+    const box = lb.querySelector('.lb-box');
+    let src = null, ph = null;
+
+    const open = item => {
+      const r = item.getBoundingClientRect();
+      const ar = r.width / r.height;
+      const maxW = window.innerWidth - 40, maxH = window.innerHeight - 80;
+      const w = Math.min(maxW, maxH * ar);
+      ph = document.createElement('div');
+      ph.style.cssText = `width:${r.width / (parseFloat(item.style.transform?.match(/scale\(([\d.]+)/)?.[1]) || 1)}px;height:${item.offsetHeight}px`;
+      src = item;
+      while (item.firstChild) box.appendChild(item.firstChild);
+      item.appendChild(ph);
+      box.style.width = w + 'px';
+      // grow from where the item was
+      const to = { x: (window.innerWidth - w) / 2, y: (window.innerHeight - w / ar) / 2 };
+      const s = r.width / w;
+      box.style.transition = 'none';
+      box.style.transform = `translate(${r.left - to.x}px, ${r.top - to.y}px) scale(${s})`;
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(() => requestAnimationFrame(() => { box.style.transition = ''; box.style.transform = 'none'; }));
+    };
+    const close = () => {
+      if (!src) return;
+      const r = ph.getBoundingClientRect(), b = box.getBoundingClientRect();
+      box.style.transform = `translate(${r.left - b.left}px, ${r.top - b.top}px) scale(${r.width / b.width})`;
+      lb.classList.add('closing');
+      setTimeout(() => {
+        box.querySelectorAll('video[data-click]').forEach(v => { v.pause(); v.closest('.media')?.classList.remove('playing'); });
+        ph.remove();
+        while (box.firstChild) src.appendChild(box.firstChild);
+        lb.classList.remove('open', 'closing'); box.style.transform = ''; box.style.width = '';
+        document.body.style.overflow = ''; src = ph = null;
+      }, 260);
+    };
+    lb.addEventListener('click', e => { if (!e.target.closest('.lb-box > *')) close(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+    document.querySelectorAll('.cf-item, .pair-row > *').forEach(item => item.addEventListener('click', e => {
+      if (isDesktop.matches || src) return;
+      if (e.target.closest('.play') || item.querySelector('.media.playing')) return;
+      if (item.classList.contains('cf-item') && !item.classList.contains('is-focus')) return; // side items just scroll into the centre
+      e.preventDefault();
+      open(item);
+    }));
+  })();
+
   /* ---------- videos ---------- */
   // If a video file is missing, keep showing its poster image instead.
   document.querySelectorAll('video').forEach(v => {

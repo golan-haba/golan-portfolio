@@ -427,3 +427,12 @@ button { font: inherit; }
   .hero .ruler { left: 0; top: calc(50% - 69.49vw); width: 62.05vw; }
   .hero .scissors { left: 43.33vw; top: calc(50% + 11.03vw); bottom: auto; width: 65.9vw; }
 }
+
+/* mobile lightbox for carousel items */
+.lb { position: fixed; inset: 0; z-index: 200; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0); transition: background .25s; -webkit-tap-highlight-color: transparent; }
+.lb.open { display: flex; background: rgba(0,0,0,.85); }
+.lb.open.closing { background: rgba(0,0,0,0); }
+.lb-box { transform-origin: 0 0; transition: transform .26s cubic-bezier(.2,.8,.2,1); }
+.lb-box img, .lb-box video { width: 100%; height: auto; display: block; }
+.lb-box .media, .lb-box .ol-wrap { width: 100%; }
+@media (max-width: 899px) { .cf-item.is-focus, .pair-row > * { cursor: zoom-in; } }
