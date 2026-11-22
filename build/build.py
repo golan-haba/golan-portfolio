@@ -171,12 +171,20 @@ FONT_LINKS = ((f'<link rel="preconnect" href="https://use.typekit.net" crossorig
               '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
               '<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">')
 
+# ---------- analytics ----------
+# Google Tag Manager container. The Google Analytics (GA4) tag itself is set up inside Tag Manager.
+GTM_ID = 'GTM-ZSV3VQR9'
+GTM_HEAD = (f"""<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){{w[l]=w[l]||[];w[l].push({{'gtm.start':new Date().getTime(),event:'gtm.js'}});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);}})(window,document,'script','dataLayer','{GTM_ID}');</script>
+<!-- End Google Tag Manager -->\n""" if GTM_ID else '')
+GTM_BODY = (f'<!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id={GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>\n' if GTM_ID else '')
+
 def page(title, description, body, overlay=False):
     tiled = '<section class="desk"' in body
     return f'''<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+{GTM_HEAD}<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{E(title)}</title>
 <meta name="description" content="{E(description)}">
@@ -188,7 +196,7 @@ def page(title, description, body, overlay=False):
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body id="top"{' class="tiled"' if tiled else ''}>
-{body if overlay else header() + body}
+{GTM_BODY}{body if overlay else header() + body}
 {footer()}
 {menu_html()}
 <button class="fab-top" aria-label="Back to top"><svg width="20" height="20" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10.5V1.5M6 1.5L2 5.5M6 1.5L10 5.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button>
