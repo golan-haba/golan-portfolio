@@ -436,3 +436,14 @@ button { font: inherit; }
 .lb-box img, .lb-box video { width: 100%; height: auto; display: block; }
 .lb-box .media, .lb-box .ol-wrap { width: 100%; }
 @media (max-width: 899px) { .cf-item.is-focus, .pair-row > * { cursor: zoom-in; } }
+
+/* ===== motion & illustration pages ===== */
+.nav .drop .sep { height: 1.5px; margin: 6px 20px; background: var(--green); opacity: .5; }
+.menu-sub .sep { height: 1px; width: 80px; margin: 6px 0 6px auto; background: rgba(0,0,0,.3); }
+.brand-grid.in-dark { padding: 4px 24px 16px; }
+.mgrid { display: grid; grid-template-columns: repeat(var(--cols, 2), 1fr); gap: 8px; padding: 4px 0; }
+.mgrid img, .mgrid video { width: 100%; height: auto; display: block; }
+.mfull { padding: 4px 0; }
+.mfull img, .mfull video { width: 100%; height: auto; display: block; }
+.desk .dvc { position: absolute; z-index: 2; overflow: hidden; }
+.desk .dvc video { position: absolute; object-fit: cover; max-width: none; }

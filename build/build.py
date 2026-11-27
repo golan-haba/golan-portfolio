@@ -37,6 +37,12 @@ VIDEOS = {
     'lb/web2': ('lilbuns-bun.mp4', 'box', (14.13, 25.76, 29.11, 45.29)),   # bun spinning on a finger
     'pr/msb1': ('moses-video-1.mp4', 'inset', (10.8, 81.0)),
     'pr/msb3': ('moses-video-2.mp4', 'inset', (10.9, 81.9)),
+    'mo/hol1': ('holiday-1.mp4', 'click'),
+    'mo/hol2': ('holiday-2.mp4', 'click'),
+    'mo/hol3': ('holiday-3.mp4', 'click'),
+    'il/ashmat': ('ashmat-rabim.mp4', 'click'),
+    'il/final': ('final-project.mp4', 'click'),
+    'il/fox360': ('fox-mask-360.mp4', 'auto'),
 }
 PLAY_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l16 9-16 9z" fill="#fff"/></svg>'
 
@@ -122,24 +128,29 @@ BRANDS = [('buchman feder', 'buchman-feder.html'), ('shira hadasha', 'shira-hada
           ('lil buns', 'lil-buns.html'), ('boa vida', 'boa-vida.html')]
 PROJECTS = [('rapidos', 'projects.html#rapidos'), ('bbb', 'projects.html#bbb'), ('landmark', 'projects.html#landmark'),
             ('elbit', 'projects.html#elbit'), ('moses shop', 'projects.html#moses-shop')]
+EXTRA_WORK = [('motion', 'motion.html'), ('illustration', 'illustration.html')]
 BURGER = '<svg width="28" height="20" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 2H26M2 10H26M2 18H26" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>'
 CLOSE = '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" stroke="#009476" stroke-width="2.5" stroke-linecap="round"/></svg>'
 
 def nav_html():
-    def drop(items): return '<ul class="drop">' + ''.join(f'<li><a href="{h}">{E(n)}</a></li>' for n, h in items) + '</ul>'
+    def drop(items, extra=()):
+        more = ('<li class="sep" aria-hidden="true"></li>' + ''.join(f'<li><a href="{h}">{E(n)}</a></li>' for n, h in extra)) if extra else ''
+        return '<ul class="drop">' + ''.join(f'<li><a href="{h}">{E(n)}</a></li>' for n, h in items) + more + '</ul>'
     return ('<ul class="nav">'
-            f'<li><button aria-haspopup="true">projects</button>{drop(PROJECTS)}</li>'
+            f'<li><button aria-haspopup="true">projects</button>{drop(PROJECTS, EXTRA_WORK)}</li>'
             f'<li><button aria-haspopup="true">branding</button>{drop(BRANDS)}</li>'
             '<li><a href="index.html#about">about</a></li></ul>'
             f'<button class="burger" aria-label="Open menu" aria-expanded="false">{BURGER}</button>')
 
 def menu_html():
-    def sub(items): return '<ul class="menu-sub">' + ''.join(f'<li><a href="{h}">{E(n)}</a></li>' for n, h in items) + '</ul>'
+    def sub(items, extra=()):
+        more = ('<li class="sep" aria-hidden="true"></li>' + ''.join(f'<li><a href="{h}">{E(n)}</a></li>' for n, h in extra)) if extra else ''
+        return '<ul class="menu-sub">' + ''.join(f'<li><a href="{h}">{E(n)}</a></li>' for n, h in items) + more + '</ul>'
     return ('<div class="menu" role="dialog" aria-label="Menu"><div class="menu-card">'
             f'<button class="menu-close" aria-label="Close menu">{CLOSE}</button>'
             '<ul class="menu-list">'
             '<li><a class="menu-cat" href="index.html#about">about</a></li>'
-            f'<li><a class="menu-cat" href="projects.html">projects</a>{sub(PROJECTS)}</li>'
+            f'<li><a class="menu-cat" href="projects.html">projects</a>{sub(PROJECTS, EXTRA_WORK)}</li>'
             f'<li><a class="menu-cat" href="index.html#branding">branding</a>{sub(BRANDS)}</li>'
             '</ul></div></div>')
 
@@ -223,6 +234,13 @@ def dvideo(file, x, y, w, h, mode='auto'):
                 f'<button class="play" aria-label="Play video">{PLAY_SVG}</button></div>')
     return f'<div class="dv" style="{st}"><video muted loop playsinline autoplay preload="none"><source src="assets/video/{file}" type="video/mp4"></video></div>'
 
+def dclip(file, clip, r):
+    """video larger than its frame, cropped to the frame as in Figma. clip/r = (x, y, w, h) in frame px"""
+    cx, cy, cw, ch = clip; x, y, w, h = r
+    st = f'left:{round((x-cx)/cw*100,2)}%;top:{round((y-cy)/ch*100,2)}%;width:{round(w/cw*100,2)}%;height:{round(h/ch*100,2)}%'
+    return (f'<div class="dvc" style="left:{U(cx)};top:{U(cy)};width:{U(cw)};height:{U(ch)}">'
+            f'<video muted loop playsinline autoplay preload="none" style="{st}"><source src="assets/video/{file}" type="video/mp4"></video></div>')
+
 def dmeta(y): return dtext('2026', 131, y, 300, 25, 'meta-d') + dtext('the work on', 1170, y, 400, 25, 'meta-d', 'right')
 def dlabel(l, r, y, x1=151, x2=1108, color='#fff', light=False):
     w = 300 if light else 800
@@ -254,14 +272,14 @@ def desk_projects():
          dmeta(7092), dtitle('BBB', 339, 7342, 1050, 127.1, 'center'),
          dlabel('Stranger Things Themed Event', 'BBB', 7859, 196, 1070), dlabel('birthday', 'bbb', 10703), dlabel('other', 'bbb', 11630),
          dmeta(12536), dtitle('LANDMARK', 339, 12779, 1050, 127.1, 'center'),
-         dvideo('landmark.mp4', 264, 13452, 1188, 763),
-         dmeta(14530), dtitle('ELBIT', 339, 14751, 1050, 127.1, 'center'),
-         dmeta(19307), dtitle('MOSES\nSHOP', 339, 19473, 1050, 127.1, 'center')]
+         dvideo('landmark.mp4', 447.9, 13378.3, 831.6, 534.1),
+         dmeta(14178), dtitle('ELBIT', 339, 14399, 1050, 127.1, 'center'),
+         dmeta(18955), dtitle('MOSES\nSHOP', 339, 19121, 1050, 127.1, 'center')]
     d_ol = ('pr/ms1', 'pr/ms3', 'pr/msb1', 'pr/msb2')
     grid = ''.join(f'<div>{outlined(k, "Moses Shop post") if k in d_ol else media(k, "Moses Shop post")}</div>' for k in ['pr/ms1', 'pr/ms2', 'pr/ms3', 'pr/msb1', 'pr/msb2', 'pr/msb3'])
     anchors = ''.join(f'<span class="anc" data-anchor="{a}" style="top:{U(y)}"></span>' for a, y in
-                      [('rapidos', 200), ('bbb', 7030), ('landmark', 12470), ('elbit', 14470), ('moses-shop', 19240)])
-    extra = anchors + f'<div class="moses-d" style="top:{U(19920)};height:{U(1662)}"><div class="mg">{grid}</div></div>'
+                      [('rapidos', 200), ('bbb', 7030), ('landmark', 12470), ('elbit', 14118), ('moses-shop', 18888)])
+    extra = anchors + f'<div class="moses-d" style="top:{U(19568)};height:{U(1662)}"><div class="mg">{grid}</div></div>'
     return desk('pr', o, 2382, extra)
 
 # ================= PAGES =================
@@ -364,8 +382,159 @@ def projects():
     body = '<div class="mob">' + body + '</div>' + desk_projects()
     return page('Projects — Golan Haba', 'Campaigns and social content for Rapidos, BBB, Landmark, Elbit and Moses Shop.', body)
 
+
+# ================= MOTION & ILLUSTRATION =================
+def grid(keys, cols=2, alt=''):
+    return f'<div class="mgrid" style="--cols:{cols}">' + ''.join(f'<div>{media(k, alt)}</div>' for k in keys) + '</div>'
+
+def motion():
+    logos = ''.join(
+        f'<a class="brand-card reveal" href="{h}"><span class="thumb">{media("hm/brand" + str(i + 1), n)}</span>'
+        f'<span class="name">{E(n)}</span><span class="num">//0{i + 1}</span></a>'
+        for i, (n, h) in enumerate(BRANDS))
+    body = ('<div class="proj">' + meta() + brand_title('MOTION') +
+            dark(label('logo animations', 'branding'), f'<div class="brand-grid in-dark">{logos}</div>', pad=False) +
+            dark(label('animations', 'buchman feder'), carousel([f'bf/post{i}' for i in range(1, 4)], 'Buchman Feder animated post'),
+                 label('ai videos', 'shira hadasha'), carousel([f'sh/reel{i}' for i in range(1, 6)], 'Shira Hadasha AI video'),
+                 label('holiday animations', 'rosh hashana/shavuot'), carousel(['mo/hol1', 'mo/hol2', 'mo/hol3'], 'Holiday greeting animation'),
+                 label('product animation', 'lil buns'), f'<div class="mfull reveal">{media("lb/web2", "Lil Buns website with the bun animation")}</div>',
+                 label('social videos', 'moses shop'), carousel(['pr/msb1', 'pr/msb2', 'pr/msb3'], 'Moses Shop video post', outline=('pr/msb1', 'pr/msb2', 'pr/msb3')),
+                 label('website animation', 'landmark'),
+                 '<div class="landmark-shot reveal"><div class="screen">' + img("pr/landmark", "Landmark website") +
+                 '<video muted loop playsinline autoplay preload="none" aria-label="Landmark website animation"><source src="assets/video/landmark.mp4" type="video/mp4"></video></div></div>') + '</div>')
+    o = [dmeta(261), dtitle('MOTION', 339, 543, 1050, 127.1, 'center'),
+         dlabel('logo animations', 'branding', 986, 152, 1109), dlabel('animations', 'buchman feder', 1635, 152, 1109),
+         dlabel('ai videos', 'shira hadasha', 2523, 152, 1109), dlabel('holiday animations', 'rosh hashana/shavuot', 4300, 152, 1109),
+         dlabel('product animation', 'lil buns', 5293, 152, 1109), dlabel('social videos', 'moses shop', 6320, 152, 1109),
+         dlabel('website animation', 'landmark', 7174, 152, 1109),
+         dclip('buchman-anim-1.mp4', (109, 1105, 340, 340), (75.7, 987.7, 413.8, 551.8)),
+         dclip('shira-logo-anim.mp4', (499, 1105, 340, 340), (499, 1048.2, 340, 453.6)),
+         dclip('lilbuns-logo-anim.mp4', (889, 1105, 340, 340), (889, 1105, 340, 340)),
+         dclip('boavida-logo-anim.mp4', (1279, 1105, 340, 340), (1318.4, 1150.2, 261.1, 261.1)),
+         dclip('buchman-anim-2.mp4', (210, 1817.1, 380.8, 506.5), (211, 1732.4, 380, 675.5)),
+         dvideo('buchman-anim-3.mp4', 674.4, 1817, 380, 506.6), dvideo('buchman-anim-1.mp4', 1122, 1817, 380, 506.6),
+         dvideo('shira-reel-3.mp4', 197, 2642, 379, 673, 'click'), dvideo('shira-reel-2.mp4', 674, 2642, 379, 674, 'click'),
+         dvideo('shira-reel-1.mp4', 1154, 2642, 379, 674, 'click'), dvideo('shira-reel-5.mp4', 434, 3426, 379, 673, 'click'),
+         dvideo('shira-reel-4.mp4', 914, 3426, 379, 673, 'click'),
+         dvideo('holiday-1.mp4', 197, 4419, 379, 673, 'click'), dvideo('holiday-2.mp4', 674, 4419, 379, 674, 'click'),
+         dvideo('holiday-3.mp4', 1154, 4419, 379, 674, 'click'),
+         dvideo('lilbuns-bun.mp4', 476.4, 5605.4, 314.1, 322.6),
+         dvideo('moses-video-1.mp4', 422, 6499, 379, 474), dvideo('moses-video-2.mp4', 923, 6505, 382, 478),
+         dvideo('landmark.mp4', 448, 7411, 831.6, 534.1)]
+    body = '<div class="mob">' + body + '</div>' + desk('mo', o)
+    return page('Motion — Golan Haba', 'Motion design: logo animations, animated posts, AI videos, holiday greetings and website animations.', body)
+
+def illustration():
+    body = ('<div class="proj">' + meta() + brand_title('ILLUSTRATION') +
+            dark(label('storyboard', 'ashmat rabim'), f'<div class="mfull reveal">{media("il/ashmat", "Ashmat Rabim animated short")}</div>',
+                 grid([f'il/sb{i}' for i in range(1, 7)], 2, 'Ashmat Rabim storyboard frame'),
+                 label('character design', 'final project'), f'<div class="mfull reveal">{media("il/final", "Final project animated short")}</div>',
+                 grid([f'il/fp{i}' for i in range(1, 7)], 2, 'Final project still'),
+                 grid([f'il/ch{i}' for i in range(1, 8)], 4, 'Character design'),
+                 label('character design', 'fox mask'), f'<div class="mfull reveal">{img("il/foxkey", "Fox mask character in a neon alley")}</div>',
+                 f'<div class="mfull reveal">{media("il/fox360", "Fox mask character turnaround")}</div>',
+                 carousel([f'il/fox{i}' for i in range(1, 8)], 'Fox mask character design'),
+                 label('illustrations', 'editorial & posters'), carousel([f'il/ed{i}' for i in range(1, 5)], 'Editorial illustration')) + '</div>')
+    o = [dmeta(261), dtitle('ILLUSTRATION', 164, 543, 1400, 127.1, 'center'),
+         dlabel('storyboard', 'ashmat rabim', 986, 152, 1109), dlabel('character design', 'final project', 2620, 152, 1109),
+         dlabel('character design', 'fox mask', 4597, 152, 1109), dlabel('illustrations', 'editorial & posters', 6672, 152, 1109),
+         dvideo('ashmat-rabim.mp4', 152, 1105, 1424, 801, 'click'), dvideo('final-project.mp4', 152, 2739, 1424, 801, 'click'),
+         dvideo('fox-mask-360.mp4', 152, 4716, 565, 801)]
+    body = '<div class="mob">' + body + '</div>' + desk('il', o)
+    return page('Illustration — Golan Haba', 'Illustration: storyboards, character design and editorial posters.', body)
+
+# ================= INTERACTIVE (scroll-driven) VERSION =================
+IX_BRANDS = [
+    ('buchman-feder', 'BUCHMAN FEDER', '01', '#2f3226', 'bf/logo', DESCS['bf'],
+     ['bf/l1', ('v', 'buchman-anim-2.mp4', 'bf/post1', 720, 1280), 'bf/l4', 'bf/web1', 'bf/l3', ('v', 'buchman-anim-3.mp4', 'bf/post2', 720, 960), 'bf/l5', 'bf/l8']),
+    ('shira-hadasha', 'SHIRA HADASHA', '02', '#2a221e', 'sh/logo', DESCS['sh'],
+     ['sh/l1', 'sh/l2', ('v', 'shira-reel-1.mp4', 'sh/reel1', 720, 1280), 'sh/l3', 'sh/l5', ('v', 'shira-reel-3.mp4', 'sh/reel3', 720, 1280), 'sh/l7']),
+    ('lil-buns', 'LIL BUNS', '03', '#5b36c9', 'lb/logo', DESCS['lb'],
+     ['lb/l1', ('v', 'lilbuns-bun.mp4', 'lb/p1', 640, 656), 'lb/l2', 'lb/web1', 'lb/l3', 'lb/l4', 'lb/l5']),
+    ('boa-vida', 'BOA VIDA', '04', '#2b1d1e', 'bv/logo', DESCS['bv'],
+     ['bv/l1', 'bv/p1', 'bv/l2', ('v', 'boavida-logo-anim.mp4', 'bv/post1', 720, 720), 'bv/l3', 'bv/p5', 'bv/l4', 'bv/l5']),
+]
+
+def ix_item(it, cls='ix-item'):
+    if isinstance(it, tuple):
+        _, file, poster, w, h = it
+        return (f'<div class="{cls} is-video" style="--ar:{w / h:.4f}"><video muted loop playsinline preload="none" poster="{IMG}{poster}.webp" aria-hidden="true">'
+                f'<source src="assets/video/{file}" type="video/mp4"></video></div>')
+    w, h = size(it)
+    return f'<div class="{cls}" style="--ar:{w / h:.4f}">{img(it, "")}</div>'
+
+def interactive():
+    piece = lambda cls, inner: f'<div class="ix-piece {cls}"><div class="ix-fly">{inner}</div></div>'
+    nav = header(overlay=True).replace('index.html#about', '#about')
+    hero = ('<section class="ix-hero" data-pin><div class="ix-stick mat">' + nav +
+            piece('p-ruler', img("hm/ruler", "", lazy=False)) + piece('p-scissors', img("hm/scissors", "", lazy=False)) +
+            '<div class="ix-hero-in">' + piece('p-face', face_html("Illustrated portrait of Golan", cls="ix-face")) +
+            piece('p-name', '<h1 class="ix-name">golan haba</h1>') +
+            piece('p-role', '<p class="ix-role">graphic designer · branding &amp; motion</p>') + '</div>'
+            '<div class="ix-hint" aria-hidden="true">scroll<span></span></div></div></section>')
+    about = ('<section class="ix-about" id="about" data-pin><div class="ix-stick ix-about-in">'
+             f'<div class="ix-portrait">{img("hm/portrait", "Golan Haba", lazy=False)}</div>'
+             '<div class="ix-about-txt">'
+             '<div class="ix-step"><h2 class="ix-h2 big">hello</h2><p>I’m Golan! A graphic designer specializing in motion design and animation, with two years of experience working in a design&nbsp;studio.</p><p>I’m passionate about bringing ideas to life through movement, illustration, and creative storytelling.</p><p><strong>Let’s create something amazing&nbsp;together!</strong></p></div>'
+             f'<div class="ix-step"><h2 class="ix-h2">skills</h2>{img("hm/skills", "After Effects, Illustrator, InDesign, ChatGPT, Figma, Photoshop, Claude", cls="ix-skills")}</div>'
+             '<div class="ix-step ix-row"><div><h2 class="ix-h2">experience</h2><p><strong>2025 – present</strong><br>graphic designer – idea studio</p></div>'
+             '<div><h2 class="ix-h2">education</h2><p><strong>b.design visual communication</strong><br>hit – holon institute of technology</p></div></div>'
+             '</div></div></section>')
+    band = lambda t, id_='': f'<section class="ix-band mat"{f" id={chr(34)}{id_}{chr(34)}" if id_ else ""}><h2 class="ix-band-t">{t}</h2></section>'
+    brands = ''
+    for slug, name, num, color, logo, desc_, items in IX_BRANDS:
+        track = ''.join(ix_item(i) for i in items) + f'<a class="ix-item ix-more" href="{slug}.html"><span>view <br>project</span><b>→</b></a>'
+        brands += (f'<section class="ix-brand" data-brand style="--bg:{color}"><div class="ix-stick ix-brand-in">'
+                   f'<div class="ix-cover"><div class="ix-logo">{img(logo, name + " logo", lazy=False)}</div></div>'
+                   f'<div class="ix-info"><span class="ix-num">//{num}</span><h3>{E(name)}</h3><p>{E(desc_)}</p>'
+                   f'<a class="ix-pill" href="{slug}.html">view the full branding →</a></div>'
+                   f'<div class="ix-track-wrap"><div class="ix-track">{track}</div></div></div></section>')
+    posters = ''.join(f'<div class="ix-card">{img(f"pr/poster{i}", "Rapidos in-store poster", lazy=False)}</div>' for i in range(1, 10))
+    stack = ('<section class="ix-stack" data-pin><div class="ix-stick ix-stack-in">'
+             '<div class="ix-stack-head"><span>in-store poster design</span><h3>RAPIDOS</h3></div>'
+             f'<div class="ix-cards">{posters}</div>'
+             '<a class="ix-pill" href="projects.html#rapidos">more rapidos →</a></div></section>')
+    def grid(title, sub, keys, href, cls=''):
+        cells = ''.join(f'<div class="rv" style="--d:{(n % 3) * 90}ms">{ix_item(k, "ix-cell")}</div>' for n, k in enumerate(keys))
+        return (f'<section class="ix-show {cls}"><div class="ix-show-head rv"><span>{sub}</span><h3>{title}</h3></div>'
+                f'<div class="ix-grid">{cells}</div><a class="ix-pill rv" href="{href}">see the project →</a></section>')
+    shows = (grid('BBB', 'stranger things themed event', ['pr/stpost1', 'pr/stpost2', 'pr/stpost3', 'pr/ststory1', 'pr/ststory2', 'pr/ststory3'], 'projects.html#bbb') +
+             grid('MOSES SHOP', 'social', ['pr/ms1', ('v', 'moses-video-1.mp4', 'pr/msb1', 720, 900), 'pr/ms3', 'pr/msb2', ('v', 'moses-video-2.mp4', 'pr/msb3', 720, 900), 'pr/ms2'], 'projects.html#moses-shop', 'light') +
+             '<section class="ix-show ix-elbit"><div class="ix-show-head rv"><span>cyclone employee event</span><h3>ELBIT</h3></div>'
+             '<div class="ix-par">' + ''.join(f'<div class="ix-par-i rv" data-speed="{sp}">{img(k, "Elbit Cyclone event")}</div>' for k, sp in [('pr/el1', '0'), ('pr/el3', '0.15'), ('pr/el5', '-0.1'), ('pr/el7', '0.2')]) + '</div>'
+             '<a class="ix-pill rv" href="projects.html#elbit">see the project →</a></section>')
+    soc = ''.join(f'<a href="{h}" target="_blank" rel="noopener"><img src="assets/icons/{k}.svg" width="28" height="28" alt="{E(n)}"></a>' for n, h, k in SOCIALS)
+    contact = ('<section class="ix-contact" id="contact" data-pin><div class="ix-stick mat ix-contact-in">'
+               '<div class="ix-cm"><img src="assets/img/contact.gif" width="1272" height="268" alt="Contact me"></div>'
+               f'<div class="ix-end"><p>stay in touch</p><div class="ix-soc">{soc}</div>'
+               '<a class="ix-pill white" href="index.html">classic version of the site</a></div></div></section>')
+    head = '<div class="ix-bar" aria-hidden="true"><span></span></div>'
+    body = (head + '<main>' + hero + about + band('branding', 'branding') + brands + band('projects', 'projects') + stack + shows + contact + '</main>')
+    return f'''<!doctype html>
+<html lang="en">
+<head>
+{GTM_HEAD}<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Golan Haba — Interactive Portfolio</title>
+<meta name="description" content="Interactive scroll portfolio of Golan Haba, graphic designer: branding and motion.">
+<meta property="og:title" content="Golan Haba — Interactive Portfolio">
+<meta property="og:image" content="assets/img/hm/face.webp">
+<link rel="icon" href="assets/img/hm/face.webp">
+{FONT_LINKS}
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/interactive.css">
+</head>
+<body id="top">
+{GTM_BODY}{body}
+{menu_html().replace('index.html#about', '#about')}
+<script src="assets/js/main.js"></script>
+<script src="assets/js/interactive.js"></script>
+</body>
+</html>
+'''
+
 PAGES = {'index.html': home, 'buchman-feder.html': buchman, 'shira-hadasha.html': shira,
-         'lil-buns.html': lilbuns, 'boa-vida.html': boavida, 'projects.html': projects}
+         'lil-buns.html': lilbuns, 'boa-vida.html': boavida, 'projects.html': projects, 'motion.html': motion, 'illustration.html': illustration, 'interactive.html': interactive}
 
 if __name__ == '__main__':
     for name, fn in PAGES.items():
