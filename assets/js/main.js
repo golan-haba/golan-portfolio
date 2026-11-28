@@ -146,6 +146,66 @@
   }, { threshold: 0.2 }) : null;
   document.querySelectorAll('video[autoplay]').forEach(v => io?.observe(v));
 
+
+  /* ---------- home intro, stop motion like the launch video: face pops in with a poof, name is typed, role letters pop in tilted and keep boiling ---------- */
+  (() => {
+    const root = document.documentElement, hero = document.querySelector('.hero');
+    const face = hero && hero.querySelector('.hero-face'), h1 = hero && hero.querySelector('h1'), role = hero && hero.querySelector('.role');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!face || !h1 || !role || reduce) { root.classList.remove('intro-pending'); return; }
+    const intro = root.classList.contains('intro-pending');
+    try { sessionStorage.setItem('gh_intro', '1'); } catch (e) {}
+    const FPS = 8, rnd = n => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+    const cl = x => Math.max(0, Math.min(1, x)), seg = (t, a, b) => cl((t - a) / (b - a));
+    const back = x => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+    const split = (el, cls) => {
+      const txt = el.textContent; el.setAttribute('aria-label', txt); el.textContent = '';
+      return [...txt].map(ch => { const s = document.createElement('span'); s.className = cls; s.setAttribute('aria-hidden', 'true');
+        s.textContent = ch === ' ' ? ' ' : ch; el.appendChild(s); return s; });
+    };
+    const nameL = split(h1, 'tl'), roleL = split(role, 'rl');
+    const tilt = roleL.map((_, i) => (i % 2 ? 1 : -1) * (4 + (i * 37) % 5));
+    const cur = document.createElement('span'); cur.className = 'type-cur'; cur.setAttribute('aria-hidden', 'true');
+    const box = face.parentElement, puffs = [];
+    if (intro) for (let i = 0; i < 9; i++) { const p = document.createElement('span'); p.className = 'intro-puff'; box.appendChild(p); puffs.push(p); }
+    const T_TYPE = 0.75, T_ROLE = T_TYPE + nameL.length / FPS + 0.25, T_END = T_ROLE + roleL.length / FPS + 0.5;
+    let k = intro ? 0 : Math.ceil(T_END * FPS), visible = true;
+    const frame = () => {
+      const t = k / FPS, boil = Math.floor(k / 3);
+      // face: pop in (scale with overshoot), then a gentle boil
+      const sc = intro ? back(seg(t, 0, 0.42)) : 1, on = t > 0.45;
+      face.style.transform = `translate(${on ? (rnd(boil) - .5) * 4 : 0}px,${on ? (rnd(boil + 7) - .5) * 4 : 0}px) scale(${sc}) rotate(${on ? (rnd(boil + 3) - .5) * 3 : 0}deg)`;
+      // poof
+      if (puffs.length) {
+        const pp = seg(t, 0.05, 0.55), r0 = face.offsetWidth * 0.35, cx = face.offsetLeft + face.offsetWidth / 2, cy = face.offsetTop + face.offsetHeight / 2;
+        puffs.forEach((p, i) => { const a = i / 9 * Math.PI * 2 + rnd(i) * .5, r = r0 + face.offsetWidth * 0.9 * pp;
+          p.style.display = t >= 0.05 && t < 0.6 ? 'block' : 'none';
+          p.style.left = cx + 'px'; p.style.top = cy + 'px'; p.style.width = face.offsetWidth * 0.32 + 'px';
+          p.style.transform = `translate(-50%,-50%) translate(${Math.cos(a) * r}px,${Math.sin(a) * r}px) scale(${(1 - pp) * (0.8 + rnd(i + 20) * .8)})`; });
+        if (t >= 0.6) { puffs.forEach(p => p.remove()); puffs.length = 0; }
+      }
+      // typing
+      const n = Math.max(0, Math.floor((t - T_TYPE) * FPS) + 1);
+      nameL.forEach((s, i) => s.style.visibility = (t >= T_TYPE && i < n) ? 'visible' : 'hidden');
+      if (intro && t >= T_TYPE - 0.375 && t < T_ROLE + 0.6) {
+        const last = nameL[Math.min(nameL.length, n) - 1];
+        if (t >= T_TYPE && last) last.after(cur); else h1.prepend(cur);
+        cur.style.visibility = (n < nameL.length && t >= T_TYPE) || Math.floor(t * 2.5) % 2 === 0 ? 'visible' : 'hidden';
+      } else if (cur.isConnected) cur.remove();
+      // role letters pop in one per frame, tilted, and keep boiling
+      roleL.forEach((s, i) => { const st = T_ROLE + i / FPS, shown = t >= st;
+        s.style.visibility = shown ? 'visible' : 'hidden';
+        const ps = t < st + 1 / FPS ? 0.55 : (t < st + 2 / FPS ? 1.2 : 1);
+        const jx = (rnd(boil * 7 + i) - .5) * 3, jy = (rnd(boil * 3 + i * 11) - .5) * 3, jr = (rnd(boil * 5 + i * 13) - .5) * 4;
+        s.style.transform = `translate(${jx}px,${jy}px) rotate(${tilt[i] + jr}deg) scale(${ps})`; });
+      root.classList.remove('intro-pending');
+      k++;
+    };
+    frame();
+    setInterval(() => { if (visible && !document.hidden) frame(); }, 1000 / FPS);
+    if ('IntersectionObserver' in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(hero);
+  })();
+
   /* ---------- brand-card logo animations ---------- */
   document.querySelectorAll('.brand-card').forEach(card => {
     const v = card.querySelector('.hover-vid'); if (!v) return;
@@ -153,10 +213,8 @@
     v.querySelector('source')?.addEventListener('error', () => { ok = false; v.remove(); });
     const play = () => { if (!ok) return; v.play().then(() => card.classList.add('is-playing')).catch(() => {}); };
     const stop = () => { card.classList.remove('is-playing'); v.pause(); };
-    if (window.matchMedia('(hover: hover)').matches) {
-      card.addEventListener('mouseenter', play); card.addEventListener('mouseleave', stop);
-      card.addEventListener('focus', play); card.addEventListener('blur', stop);
-    } else if ('IntersectionObserver' in window) {
+    // the logo animations loop by themselves while the cards are on screen (desktop and mobile)
+    if ('IntersectionObserver' in window) {
       new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? play() : stop()), { threshold: 0.6 }).observe(card);
     }
   });

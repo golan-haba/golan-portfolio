@@ -455,3 +455,44 @@ button { font: inherit; }
 @media (min-width:900px){.cv-btn{font-size:15px;padding:11px 28px}}
 
 @media (min-width:900px){.about .col .cv-btn{position:absolute;left:calc(var(--u)*1243);top:calc(var(--u)*655);margin:0;font-size:calc(var(--u)*17);padding:calc(var(--u)*12) calc(var(--u)*30);gap:calc(var(--u)*9);border-width:max(1.5px,calc(var(--u)*2))}.about .col .cv-btn svg{width:calc(var(--u)*15);height:calc(var(--u)*15)}}
+
+/* brand cards: arrow after the name shows they open a page; green on hover */
+.brand-card .go { font-style: normal; font-weight: 400; display: inline-block; margin-left: .35em; transition: transform .25s, color .25s; }
+.brand-card:hover .go, .brand-card:focus-visible .go { transform: translateX(6px); color: var(--green); }
+.brand-card:hover .name, .brand-card:focus-visible .name { color: var(--green); }
+.brand-card .thumb { transition: border-color .25s, box-shadow .25s; }
+.brand-card:hover .thumb, .brand-card:focus-visible .thumb { border-color: var(--green); box-shadow: 0 0 0 2px var(--green); }
+
+/* thin banner under the brand cards, inviting visitors into the brand pages */
+.brand-invite { display: block; text-align: center; text-decoration: none; color: #fff; padding: 10px 16px; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+@media (min-width: 900px) { .brand-invite { padding: .9vw 0; font-size: clamp(13px, 1vw, 18px); } }
+@media (max-width: 899px) {
+  .brand-invite { font-size: 10px; letter-spacing: .06em; white-space: nowrap; padding: 9px 8px; }
+  /* labels sit on the image on mobile: white tag so they stay readable over dark animations */
+  .brand-card .name, .brand-card .num { background: #fff; padding: 2px 5px; bottom: 6px; }
+  .brand-card .name { left: 6px; } .brand-card .num { right: 6px; }
+}
+
+/* invite banner: the sentence repeats and slides left → right in an endless loop */
+.brand-invite { overflow: hidden; padding-left: 0 !important; padding-right: 0 !important; white-space: nowrap; }
+.brand-invite .mq { display: inline-flex; width: max-content; animation: mq-right 65s linear infinite; }
+@media (max-width: 899px) { .brand-invite .mq { animation-duration: 40s; } }
+.brand-invite .mq span { display: inline-flex; align-items: center; }
+.brand-invite .mq i { font-style: normal; margin: 0 1.4em; }
+@keyframes mq-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) { .brand-invite .mq { animation: none; } }
+/* equal space above the brand cards (under BRANDING) and below them (above the moving banner) */
+.home-brands { padding-bottom: 24px !important; }
+@media (min-width: 900px) { .home-brands { padding-bottom: 2.95vw !important; } }
+
+/* home intro (stop motion): typed name with a cursor, tilted role letters, poof puffs */
+.hero h1 .tl { display: inline-block; }
+.hero .role .rl { display: inline-block; }
+.hero .type-cur { display: inline-block; width: .09em; height: .78em; margin-left: .06em; background: #fff; vertical-align: -.02em; }
+.hero-inner .intro-puff { position: absolute; aspect-ratio: 1; border-radius: 50%; background: #fff; pointer-events: none; z-index: 3; }
+.hero-face { will-change: transform; }
+/* hero text in the same weights as the launch video: name in Jost Black, role like "IS LIVE" (green, white outline, dark-green shadow) */
+.hero h1 { font-family: "Jost", var(--font-display); font-weight: 900; }
+.hero .role { font-family: "Jost", var(--font-display); font-weight: 900; text-transform: uppercase; color: var(--green);
+  -webkit-text-stroke: .14em #fff; paint-order: stroke fill; letter-spacing: .04em; }
+.hero .role .rl { filter: drop-shadow(.05em .06em 0 #005c48); margin: 0 .01em; }
