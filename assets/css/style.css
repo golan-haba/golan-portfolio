@@ -468,9 +468,11 @@ button { font: inherit; }
 @media (min-width: 900px) { .brand-invite { padding: .9vw 0; font-size: clamp(13px, 1vw, 18px); } }
 @media (max-width: 899px) {
   .brand-invite { font-size: 10px; letter-spacing: .06em; white-space: nowrap; padding: 9px 8px; }
-  /* labels sit on the image on mobile: white tag so they stay readable over dark animations */
-  .brand-card .name, .brand-card .num { background: #fff; padding: 2px 5px; bottom: 6px; }
-  .brand-card .name { left: 6px; } .brand-card .num { right: 6px; }
+  /* mobile: labels (name, arrow, number) sit under each square, a little more space between cards */
+  .brand-grid { column-gap: 16px; row-gap: 22px; }
+  .brand-card { display: grid; grid-template-columns: 1fr auto; row-gap: 8px; overflow: visible; }
+  .brand-card .thumb { grid-column: 1 / -1; }
+  .brand-card span.name, .brand-card span.num { position: static; font-size: 12px; }
 }
 
 /* invite banner: the sentence repeats and slides left → right in an endless loop */
@@ -496,3 +498,8 @@ button { font: inherit; }
 .hero .role { font-family: "Jost", var(--font-display); font-weight: 900; text-transform: uppercase; color: var(--green);
   -webkit-text-stroke: .14em #fff; paint-order: stroke fill; letter-spacing: .04em; }
 .hero .role .rl { filter: drop-shadow(.05em .06em 0 #005c48); margin: 0 .01em; }
+/* the square is a span too: don't let the label rule's "bottom" nudge it up (that was the extra gap) */
+.brand-card .thumb { bottom: auto; }
+@media (min-width: 900px) { .brand-card { row-gap: .9vw; } }
+.home-brands { padding-top: 22px !important; }
+@media (min-width: 900px) { .home-brands { padding-top: 2.75vw !important; } }
