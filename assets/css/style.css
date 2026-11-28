@@ -447,3 +447,5 @@ button { font: inherit; }
 .mfull img, .mfull video { width: 100%; height: auto; display: block; }
 .desk .dvc { position: absolute; z-index: 2; overflow: hidden; }
 .desk .dvc video { position: absolute; object-fit: cover; max-width: none; }
+
+.desk .dstk{position:absolute;z-index:3;pointer-events:none;max-width:none}
