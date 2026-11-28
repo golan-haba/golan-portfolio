@@ -207,9 +207,9 @@ button { font: inherit; }
   .about .portrait { width: 21vw; max-width: none; }
   .about .col { display: contents; }
   .about .hello { grid-column: 2; grid-row: 1; }
-  .about .col .block:nth-child(1) { grid-column: 3; grid-row: 1; }
-  .about .col .block:nth-child(2) { grid-column: 3; grid-row: 2; }
-  .about .col .block:nth-child(3) { grid-column: 2; grid-row: 2; }
+  .about .col .block:nth-of-type(1) { grid-column: 3; grid-row: 1; }
+  .about .col .block:nth-of-type(2) { grid-column: 3; grid-row: 2; }
+  .about .col .block:nth-of-type(3) { grid-column: 2; grid-row: 2; }
   .block h2 { font-size: 2.96vw; }
   .about .hello h2 { font-size: 5.09vw; }
   .block p { font-size: clamp(14px, 1.05vw, 19px); }
@@ -391,13 +391,13 @@ button { font: inherit; }
   .about .block p { font-size: calc(var(--u) * 18.18); line-height: 1.22; }
   .about .hello { left: calc(var(--u) * 623); top: calc(var(--u) * 107); width: calc(var(--u) * 492); }
   .about .hello h2 { font-size: calc(var(--u) * 87.92); line-height: 1.012; margin-bottom: calc(var(--u) * 14); }
-  .about .col .block:nth-child(1) { left: calc(var(--u) * 1243); top: calc(var(--u) * 117); width: calc(var(--u) * 320); }
-  .about .col .block:nth-child(1) h2 { margin-bottom: calc(var(--u) * 28); }
-  .about .col .block:nth-child(1) .skills { width: calc(var(--u) * 310); }
-  .about .col .block:nth-child(2) { left: calc(var(--u) * 1243); top: calc(var(--u) * 425); width: calc(var(--u) * 519); }
-  .about .col .block:nth-child(2) h2 { margin-bottom: calc(var(--u) * 16); }
-  .about .col .block:nth-child(3) { left: calc(var(--u) * 623); top: calc(var(--u) * 562); width: calc(var(--u) * 519); }
-  .about .col .block:nth-child(3) h2 { margin-bottom: calc(var(--u) * 17); }
+  .about .col .block:nth-of-type(1) { left: calc(var(--u) * 1243); top: calc(var(--u) * 117); width: calc(var(--u) * 320); }
+  .about .col .block:nth-of-type(1) h2 { margin-bottom: calc(var(--u) * 28); }
+  .about .col .block:nth-of-type(1) .skills { width: calc(var(--u) * 310); }
+  .about .col .block:nth-of-type(2) { left: calc(var(--u) * 1243); top: calc(var(--u) * 425); width: calc(var(--u) * 519); }
+  .about .col .block:nth-of-type(2) h2 { margin-bottom: calc(var(--u) * 16); }
+  .about .col .block:nth-of-type(3) { left: calc(var(--u) * 623); top: calc(var(--u) * 562); width: calc(var(--u) * 519); }
+  .about .col .block:nth-of-type(3) h2 { margin-bottom: calc(var(--u) * 17); }
 }
 
 /* ===== hero tools — positions and sizes from Figma ===== */
@@ -449,3 +449,9 @@ button { font: inherit; }
 .desk .dvc video { position: absolute; object-fit: cover; max-width: none; }
 
 .desk .dstk{position:absolute;z-index:3;pointer-events:none;max-width:none}
+
+.cv-btn{display:inline-flex;align-items:center;gap:8px;margin:0 auto;justify-self:center;border:1.5px solid currentColor;border-radius:999px;padding:9px 22px;color:inherit;text-decoration:none;font-weight:700;font-size:13px;text-transform:uppercase;transition:.2s}
+.cv-btn:hover{background:var(--black);color:var(--white);border-color:var(--black)}
+@media (min-width:900px){.cv-btn{font-size:15px;padding:11px 28px}}
+
+@media (min-width:900px){.about .col .cv-btn{position:absolute;left:calc(var(--u)*1243);top:calc(var(--u)*655);margin:0;font-size:calc(var(--u)*17);padding:calc(var(--u)*12) calc(var(--u)*30);gap:calc(var(--u)*9);border-width:max(1.5px,calc(var(--u)*2))}.about .col .cv-btn svg{width:calc(var(--u)*15);height:calc(var(--u)*15)}}
