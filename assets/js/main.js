@@ -154,7 +154,6 @@
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!face || !h1 || !role || reduce) { root.classList.remove('intro-pending'); return; }
     const intro = root.classList.contains('intro-pending');
-    try { sessionStorage.setItem('gh_intro', '1'); } catch (e) {}
     const FPS = 8, rnd = n => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
     const cl = x => Math.max(0, Math.min(1, x)), seg = (t, a, b) => cl((t - a) / (b - a));
     const back = x => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
